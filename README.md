@@ -45,7 +45,7 @@ Blink is an **Agentic Service Provider (ASP)** that turns cold outreach from a p
 - **Backend:** Express.js + TypeScript
 - **AI Engine:** OpenAI GPT-4o
 - **Web Scraping:** Axios + Cheerio
-- **Deployment:** Vercel (frontend) + Render (backend)
+- **Deployment:** Dokploy (Docker)
 
 ---
 
