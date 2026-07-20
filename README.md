@@ -19,7 +19,7 @@ Blink is an **Agentic Service Provider (ASP)** that turns cold outreach from a p
 ### Key Features
 
 - **Live Web Scraping** — Paste any URL. Blink reads the page in real-time and uses the content for personalization.
-- **📧 1-Click Send** — Every response includes a pre-filled `mailto:` link. Click once and your email client opens, ready to send.
+- ** 1-Click Send** — Every response includes a pre-filled `mailto:` link. Click once and your email client opens, ready to send.
 - **⚡ Instant Results** — Powered by GPT-4o for fast, high-quality email generation.
 
 ---
