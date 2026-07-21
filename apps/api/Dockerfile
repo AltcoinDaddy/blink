@@ -11,11 +11,13 @@ RUN pnpm run --filter @blink/api build
 
 FROM node:22-alpine AS runner
 WORKDIR /app/apps/api
+ARG PORT=3000
+ENV NODE_ENV=production
+ENV PORT=$PORT
 COPY --from=builder /app/node_modules /app/node_modules
 COPY --from=builder /app/apps/api/node_modules ./node_modules
 COPY --from=builder /app/apps/api/dist ./dist
 COPY --from=builder /app/apps/api/package.json ./
 
-EXPOSE 3000
-ENV PORT=3000
+EXPOSE $PORT
 CMD ["node", "dist/index.js"]
