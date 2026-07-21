@@ -4,6 +4,8 @@ import dotenv from 'dotenv';
 import OpenAI from 'openai';
 import axios from 'axios';
 import * as cheerio from 'cheerio';
+import swaggerUi from 'swagger-ui-express';
+import swaggerJsDoc from 'swagger-jsdoc';
 
 dotenv.config();
 
@@ -13,12 +15,42 @@ const port = process.env.PORT || 3000;
 app.use(cors());
 app.use(express.json());
 
+const swaggerOptions = {
+  swaggerDefinition: {
+    openapi: '3.0.0',
+    info: {
+      title: 'Blink Outreach Copilot API',
+      version: '1.0.0',
+      description: 'API for generating highly targeted, personalized outreach emails using AI agents.',
+    },
+    servers: [
+      {
+        url: `http://localhost:${port}`,
+        description: 'Development server'
+      }
+    ]
+  },
+  apis: ['./src/index.ts'], // or whatever path to your routes
+};
+
+const swaggerDocs = swaggerJsDoc(swaggerOptions);
+app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
+
 // Initialize OpenAI client
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
 
-// Root route
+/**
+ * @swagger
+ * /:
+ *   get:
+ *     summary: Returns basic API information
+ *     description: Root endpoint that returns the name, version, and endpoints of the API.
+ *     responses:
+ *       200:
+ *         description: A JSON object containing basic API info
+ */
 app.get('/', (req: Request, res: Response) => {
   res.json({
     name: 'Blink Outreach Copilot',
@@ -31,12 +63,53 @@ app.get('/', (req: Request, res: Response) => {
   });
 });
 
-// Basic health check endpoint
+/**
+ * @swagger
+ * /health:
+ *   get:
+ *     summary: Health check endpoint
+ *     description: Returns the health status of the API.
+ *     responses:
+ *       200:
+ *         description: A JSON object indicating the API is healthy
+ */
 app.get('/health', (req: Request, res: Response) => {
   res.json({ status: 'ok', agent: 'Blink Outreach Copilot' });
 });
 
-// The OKX.AI compatible chat endpoint
+/**
+ * @swagger
+ * /chat:
+ *   post:
+ *     summary: Generate a cold outreach email
+ *     description: Uses an AI agent (Strategist, Designer, Writer, or Roaster) to generate a personalized outreach email based on a message and URL.
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - message
+ *             properties:
+ *               message:
+ *                 type: string
+ *                 description: The context for the outreach (can include a target URL).
+ *               mode:
+ *                 type: string
+ *                 enum: [default, podcast, vc, roast]
+ *                 description: The specific persona/mode to use for generation.
+ *               targetEmail:
+ *                 type: string
+ *                 description: The recipient email to pre-fill in the 1-click actionUrl.
+ *     responses:
+ *       200:
+ *         description: A JSON object containing the generated reply and a mailto actionUrl
+ *       400:
+ *         description: Bad request if the message is missing
+ *       500:
+ *         description: Internal server error
+ */
 app.post('/chat', async (req: Request, res: Response): Promise<void> => {
   try {
     const { message, mode, targetEmail } = req.body;
