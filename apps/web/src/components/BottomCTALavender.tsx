@@ -33,7 +33,7 @@ export default function BottomCTALavender() {
             href="/dashboard"
             className="inline-flex items-center gap-2 px-6 py-3 bg-[var(--accent-subtle)] text-[var(--accent-hover)] rounded-full font-bold hover:bg-[var(--accent)] hover:text-white transition-all active:scale-[0.98] shadow-sm hover:shadow-md"
           >
-            Start free chat
+            Try now
             <div className="w-5 h-5 rounded-full bg-white flex items-center justify-center text-[var(--accent)]">
               <ArrowRight weight="bold" className="w-3 h-3" />
             </div>

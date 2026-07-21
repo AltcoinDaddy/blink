@@ -8,21 +8,9 @@ export default function FooterBold() {
       <div className="max-w-6xl mx-auto flex flex-col justify-between h-full min-h-[300px]">
         
         {/* Top Links Row */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-24 text-[var(--bg-elevated)]/90 text-xs font-semibold">
-          <div className="flex flex-col gap-3">
-            <a href="#" className="hover:text-white transition-colors">Start a chat</a>
-            <a href="#" className="hover:text-white transition-colors">AI Agents</a>
-            <a href="#" className="hover:text-white transition-colors">Group Collaboration</a>
-            <a href="#" className="hover:text-white transition-colors">Generate Final Plan</a>
-            <a href="#" className="hover:text-white transition-colors">FAQ</a>
-          </div>
-          <div className="hidden md:block" />
-          <div className="hidden md:block" />
+        <div className="flex justify-end gap-8 mb-24 text-[var(--bg-elevated)]/90 text-xs font-semibold">
           <div className="flex flex-col gap-3 items-start md:items-end">
-            <a href="#" className="hover:text-white transition-colors">Instagram</a>
             <a href="#" className="hover:text-white transition-colors">Twitter/X</a>
-            <a href="#" className="hover:text-white transition-colors">LinkedIn</a>
-            <a href="#" className="hover:text-white transition-colors">Dribbble</a>
           </div>
         </div>
 

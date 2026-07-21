@@ -14,7 +14,8 @@ import {
   Plus,
   Gear,
   SignOut,
-  List
+  List,
+  Copy
 } from "@phosphor-icons/react";
 
 type Mode = "podcast" | "vc" | "roast";
@@ -223,16 +224,6 @@ export default function Dashboard() {
           </div>
         </div>
 
-        <div className="p-4 border-t border-[var(--border)] flex flex-col gap-1">
-          <button className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-[var(--text-secondary)] hover:bg-[var(--bg-input)] hover:text-[var(--text)] transition-colors text-left">
-            <Gear className="w-5 h-5" />
-            Settings
-          </button>
-          <button className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-[var(--text-secondary)] hover:bg-[var(--bg-input)] hover:text-[var(--text)] transition-colors text-left">
-            <SignOut className="w-5 h-5" />
-            Sign Out
-          </button>
-        </div>
       </aside>
 
       {/* Main Content Area */}
@@ -320,6 +311,21 @@ export default function Dashboard() {
                         <EnvelopeSimple weight="bold" className="w-4 h-4" />
                         Send This Email
                       </a>
+                      <button
+                        onClick={(e) => {
+                          navigator.clipboard.writeText(msg.content);
+                          const span = e.currentTarget.querySelector("span");
+                          if (span) {
+                            const old = span.innerText;
+                            span.innerText = "Copied!";
+                            setTimeout(() => (span.innerText = old), 2000);
+                          }
+                        }}
+                        className="inline-flex items-center gap-2 px-5 py-2.5 text-sm font-semibold text-[var(--text-secondary)] bg-[var(--bg-input)] hover:bg-[var(--border)] border border-[var(--border)] rounded-full transition-all active:scale-[0.98]"
+                      >
+                        <Copy weight="bold" className="w-4 h-4" />
+                        <span>Copy Email</span>
+                      </button>
                       <span className="text-xs font-medium text-[var(--text-dim)] bg-[var(--bg-input)] px-3 py-1.5 rounded-full border border-[var(--border)] font-[family-name:var(--font-geist-mono)]">
                         {
                           msg.content
@@ -359,14 +365,14 @@ export default function Dashboard() {
         </div>
 
         {/* Input Area */}
-        <div className="p-4 md:p-6 bg-[var(--bg)]/90 backdrop-blur-lg border-t border-[var(--border)] shrink-0">
-          <div className="max-w-3xl mx-auto flex flex-col gap-3">
+        <div className="shrink-0 p-4 pb-12 md:p-6 md:pb-16 lg:pb-24 flex justify-center">
+          <div className="w-full max-w-3xl flex flex-col gap-3 p-4 bg-[var(--bg)]/90 backdrop-blur-2xl border border-[var(--border)] rounded-3xl shadow-[0_10px_40px_-10px_rgba(0,0,0,0.1)]">
             <input
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="Recipient email (optional - enables 1-click send)"
-              className="w-full px-4 py-2.5 text-sm bg-[var(--bg-input)] border border-[var(--border)] rounded-xl text-[var(--text)] placeholder:text-[var(--text-dim)] outline-none focus:border-[var(--accent)] transition-colors"
+              className="w-full px-4 py-2.5 text-sm bg-[var(--bg-elevated)] border border-[var(--border)] rounded-xl text-[var(--text)] placeholder:text-[var(--text-dim)] outline-none focus:border-[var(--accent)] transition-colors"
             />
             <div className="flex gap-3">
               <textarea
@@ -380,7 +386,7 @@ export default function Dashboard() {
                 }}
                 placeholder={activeMode.placeholder}
                 rows={3}
-                className="flex-1 px-4 py-3 text-sm md:text-base bg-[var(--bg-input)] border border-[var(--border)] rounded-xl text-[var(--text)] placeholder:text-[var(--text-dim)] outline-none focus:border-[var(--accent)] transition-colors resize-none leading-relaxed shadow-inner"
+                className="flex-1 px-4 py-3 text-sm md:text-base bg-[var(--bg-elevated)] border border-[var(--border)] rounded-xl text-[var(--text)] placeholder:text-[var(--text-dim)] outline-none focus:border-[var(--accent)] transition-colors resize-none leading-relaxed shadow-inner"
               />
               <button
                 onClick={handleSend}

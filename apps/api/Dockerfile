@@ -16,6 +16,6 @@ COPY --from=builder /app/apps/api/node_modules ./node_modules
 COPY --from=builder /app/apps/api/dist ./dist
 COPY --from=builder /app/apps/api/package.json ./
 
-EXPOSE 3000
-ENV PORT=3000
+EXPOSE 4005
+ENV PORT=4005
 CMD ["node", "dist/index.js"]

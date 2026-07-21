@@ -9,16 +9,15 @@ export default function Navigation() {
       <div className="max-w-7xl mx-auto px-6 h-full flex items-center justify-between">
         
         {/* Logo */}
-        <div className="flex items-center gap-3">
+        <a href="/" className="flex items-center gap-3 transition-opacity hover:opacity-80">
           <Image src="/logo.png" alt="Blink Logo" width={32} height={32} className="rounded-lg object-contain shadow-[0_0_15px_var(--accent-glow)]" />
           <span className="font-bold tracking-tight text-[var(--text)]">Blink</span>
-        </div>
+        </a>
 
         {/* Desktop Links */}
         <nav className="hidden md:flex items-center gap-8 text-sm font-medium text-[var(--text-secondary)]">
-          <a href="#" className="hover:text-[var(--text)] transition-colors">Features</a>
-          <a href="#" className="hover:text-[var(--text)] transition-colors">How it works</a>
-          <a href="#" className="hover:text-[var(--text)] transition-colors">Pricing</a>
+          <a href="/features" className="hover:text-[var(--text)] transition-colors">Features</a>
+          <a href="/how-it-works" className="hover:text-[var(--text)] transition-colors">How it works</a>
         </nav>
 
         {/* CTA & Theme Toggle */}
