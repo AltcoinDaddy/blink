@@ -130,6 +130,6 @@ app.post('/chat', async (req: Request, res: Response): Promise<void> => {
   }
 });
 
-app.listen(port, () => {
-  console.log(`Blink agent is running on http://localhost:${port}`);
+app.listen(port as number, '0.0.0.0', () => {
+  console.log(`Blink agent is running on port ${port} (0.0.0.0)`);
 });
