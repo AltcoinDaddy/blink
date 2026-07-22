@@ -55,11 +55,22 @@ app.get('/', (req: Request, res: Response) => {
   res.json({
     name: 'Blink Outreach Copilot',
     version: '1.0.0',
+    description: 'Autonomous AI Agent that deep-scrapes target websites to generate highly personalized outreach emails and VC pitches.',
+    pricing: {
+      currency: 'USDT',
+      amount: 0.25,
+      type: 'per_task'
+    },
+    capabilities: [
+      'deep_web_scraping',
+      'personalized_email_drafting',
+      'persona_switching'
+    ],
     endpoints: {
       health: '/health',
       chat: 'POST /chat',
-    },
-    frontend: 'http://localhost:3000',
+      docs: '/docs'
+    }
   });
 });
 
