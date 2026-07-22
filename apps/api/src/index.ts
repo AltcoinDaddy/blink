@@ -10,7 +10,7 @@ import swaggerJsDoc from 'swagger-jsdoc';
 dotenv.config();
 
 const app = express();
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 4005;
 
 app.use(cors());
 app.use(express.json());
@@ -104,7 +104,7 @@ app.get('/health', (req: Request, res: Response) => {
  *                 description: The recipient email to pre-fill in the 1-click actionUrl.
  *     responses:
  *       200:
- *         description: A JSON object containing the generated reply and a mailto actionUrl
+ *         description: A JSON object containing the generated reply and the mailto actionUrl
  *       400:
  *         description: Bad request if the message is missing
  *       500:
@@ -161,7 +161,48 @@ app.post('/chat', async (req: Request, res: Response): Promise<void> => {
         // Remove scripts and styles
         $('script, style').remove();
         const pageText = $('body').text().replace(/\s+/g, ' ').trim().substring(0, 5000); // Take first 5000 chars to avoid token limits
-        finalMessage += `\n\n--- EXTRACTED CONTEXT FROM URL (${urls[0]}) ---\n${pageText}\n-------------------\n\n`;
+        
+        let contextText = `--- EXTRACTED CONTEXT FROM MAIN URL (${urls[0]}) ---\n${pageText}\n`;
+        
+        // Agentic Deep Scraping: Find about/team links to follow
+        const aboutLinks: string[] = [];
+        $('a').each((i, el) => {
+          const href = $(el).attr('href');
+          const text = $(el).text().toLowerCase();
+          if (href && (text.includes('about') || text.includes('team') || href.includes('/about') || href.includes('/team'))) {
+            if (href.startsWith('http')) {
+              aboutLinks.push(href);
+            } else if (href.startsWith('/')) {
+              try {
+                const urlObj = new URL(urls[0]);
+                aboutLinks.push(`${urlObj.origin}${href}`);
+              } catch (e) {}
+            }
+          }
+        });
+
+        // Deduplicate and limit to 2 pages max
+        const uniqueLinks = [...new Set(aboutLinks)].slice(0, 2);
+        
+        for (const link of uniqueLinks) {
+          try {
+            console.log(`Agentic Deep Scraping: Following link to ${link}`);
+            const subRes = await axios.get(link, {
+              headers: {
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+                'Accept': 'text/html'
+              }
+            });
+            const sub$ = cheerio.load(subRes.data);
+            sub$('script, style').remove();
+            const subText = sub$('body').text().replace(/\s+/g, ' ').trim().substring(0, 3000);
+            contextText += `\n--- EXTRACTED CONTEXT FROM SUB-PAGE (${link}) ---\n${subText}\n`;
+          } catch (e) {
+            console.log(`Skipping sub-page ${link}: failed to load`);
+          }
+        }
+        
+        finalMessage += `\n\n${contextText}\n-------------------\n\n`;
       } catch (e: any) {
         console.error(`Failed to scrape URL: ${urls[0]}`, e.message);
         finalMessage += `\n\n[SYSTEM NOTE: The backend scraper was blocked by the website ${urls[0]} (Error: ${e.message}). Politely inform the user that the website is blocking automated access, and ask them to copy and paste the relevant text directly.]\n\n`;
@@ -186,11 +227,13 @@ app.post('/chat', async (req: Request, res: Response): Promise<void> => {
     if (subjectMatch && subjectMatch[1]) {
       extractedSubject = subjectMatch[1].replace(/[`*]/g, '').trim(); // Remove asterisks or backticks if generated
     }
+    
+    const plainBody = reply.replace(/^Subject:.*?\n\n?/i, '').trim();
 
     // Generate the "1-Click Send" mailto link
     const encodedSubject = encodeURIComponent(extractedSubject);
-    const body = encodeURIComponent(reply);
-    const actionUrl = targetEmail ? `mailto:${targetEmail}?subject=${encodedSubject}&body=${body}` : null;
+    const encodedBody = encodeURIComponent(plainBody);
+    const actionUrl = targetEmail ? `mailto:${targetEmail}?subject=${encodedSubject}&body=${encodedBody}` : null;
 
     res.json({
       reply,
